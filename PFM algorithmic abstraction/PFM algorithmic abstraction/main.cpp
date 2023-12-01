@@ -38,7 +38,7 @@ int ASSERT( int i )         // Return int is kept for debug purpose,
                             // true or false should be returned instead
 {
     // Check for index is out of range, optional
-    if (( i < 0 ) || ( i > MAX_N_OF_CHECKPOINTS ))
+    if (( i < 1 ) || ( i > MAX_N_OF_CHECKPOINTS ))
     {
         cout << "Checkpoint index is out of range\t";
         return -1;
@@ -57,16 +57,32 @@ int ASSERT( int i )         // Return int is kept for debug purpose,
     }
     else
     {
-        V[ 1 ][ i + 1 ] = G ^ V[ 1 ][ i + 1 ];  // Binding with the next node
-                                                // using GSR(G) 
+        // Binding with the next node using GSR(G)
+        if ( i + 1 <= MAX_N_OF_CHECKPOINTS ) V[ 1 ][ i + 1 ] ^= G;
     }
     
     return G;
 }
 
+// The ASSERT(n) n parameter must match the sequence of calls. Otherwise, it is
+// interpreted as a programming error (or additional index checking is
+// required).
 int F1( void ) { return ASSERT( 1 ); }
 int F2( void ) { return ASSERT( 2 ); }
 int F3( void ) { return ASSERT( 3 ); }
+
+void TRACE_VSTAT( void )
+{
+    cout << endl;
+    cout << "Vertex signatures that have been updated at runtime" << endl;
+    for ( int i = 0; i < 2; i++ ) {
+        for ( int j = 0; j <= MAX_N_OF_CHECKPOINTS; j++ ) {
+            cout.width( 8 );
+            cout << hex << V[ i ][ j ] << "\t";
+        }
+        cout << endl;
+    }
+}
 
 int main(int argc, const char * argv[]) {
     // insert code here...
@@ -74,9 +90,9 @@ int main(int argc, const char * argv[]) {
     
     cout.flags( ios_base::left | ios_base::hex | ios_base::showbase );
     
-    cout << "Vertex signatures that have had updated at compile time" << endl;
+    cout << "Vertex signatures that have been updated at compile time" << endl;
     for ( int i = 0; i < 2; i++ ) {
-        for ( int j = 0; j < 4; j++ ) {
+        for ( int j = 0; j <= MAX_N_OF_CHECKPOINTS; j++ ) {
             cout.width( 8 );
             cout << hex << V[ i ][ j ] << "\t";
         }
@@ -89,16 +105,7 @@ int main(int argc, const char * argv[]) {
     TRACE(F1()); cout << endl;
     TRACE(F2()); cout << endl;
     TRACE(F3()); cout << endl;
-    
-    cout << endl;
-    cout << "Vertex signatures that have had updated at runtime" << endl;
-    for ( int i = 0; i < 2; i++ ) {
-        for ( int j = 0; j < 4; j++ ) {
-            cout.width( 8 );
-            cout << hex << V[ i ][ j ] << "\t";
-        }
-        cout << endl;
-    }
+    TRACE_VSTAT();
     
     G = 0;                  // GSR(G) = 0, next critical path evaluation
     
@@ -110,6 +117,7 @@ int main(int argc, const char * argv[]) {
     TRACE(F3()); cout << endl;
     TRACE(F2()); cout << endl;
     TRACE(F3()); cout << endl;
+    TRACE_VSTAT();
     
     G = 0;                  // GSR(G) = 0, next critical path evaluation
     
@@ -117,6 +125,7 @@ int main(int argc, const char * argv[]) {
     TRACE(F1()); cout << endl;
     TRACE(F2()); cout << endl;
     TRACE(F2()); cout << endl;
+    TRACE_VSTAT();
     
     G = 0;                  // GSR(G) = 0, next critical path evaluation
     
@@ -124,6 +133,17 @@ int main(int argc, const char * argv[]) {
     TRACE(F3()); cout << endl;
     TRACE(F2()); cout << endl;
     TRACE(F1()); cout << endl;
+    TRACE(F2()); cout << endl;
+    TRACE_VSTAT();
+    
+    G = 0;                  // Next critical path evaluation, here optional
+    
+    cout << endl;
+    TRACE(F1()); cout << endl;
+    TRACE(F2()); cout << endl;
+    TRACE(F3()); cout << endl;
+    TRACE(F1()); cout << endl;
+    TRACE_VSTAT();
     
     return 0;
 }
