@@ -99,6 +99,8 @@ int main(int argc, const char * argv[]) {
         cout << endl;
     }
     
+    // The GSR(R) register must be reset before the critical path is taken.
+    
     G = 0;                  // Next critical path evaluation, here optional
     
     cout << endl;
