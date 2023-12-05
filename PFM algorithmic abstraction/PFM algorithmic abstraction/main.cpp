@@ -21,7 +21,8 @@ int G = 0;                  // GSR(G) as global signature register
 #define V_2 0x00002200
 #define V_3 0x00440000
 
-// Number of vertices having a unique signature
+// Number of vertices having a unique signature.
+// Since V[1][n] changes at runtime, it should not be a constant type.
 int V[ 2 ][ MAX_N_OF_CHECKPOINTS + 1 ] =
 {
     { V_0, V_1, V_2, V_3 },
@@ -34,16 +35,8 @@ int V[ 2 ][ MAX_N_OF_CHECKPOINTS + 1 ] =
     }
 };
 
-int ASSERT( int i )         // Return int is kept for debug purpose,
-                            // true or false should be returned instead
+bool ASSERT( int i )
 {
-    // Check for index is out of range, optional
-    if (( i < 1 ) || ( i > MAX_N_OF_CHECKPOINTS ))
-    {
-        cout << "Checkpoint index is out of range\t";
-        return -1;
-    }
-    
     if (( G ^= ( V[ 1 ][ i - 1 ] ^ V[ 1 ][ i ] )) != V[ 1 ][ i ])
     {
         cout << "(illegal sequence)\t";
@@ -52,8 +45,12 @@ int ASSERT( int i )         // Return int is kept for debug purpose,
         // triggered on the FIRST invalid state. -1 is an illegal sequence
         // marker, optional.
         G = -1;
-
+        
         // TRIGGERING OF THE SAFETY FUNCTION ...
+        
+        // Never be reached, or to be used concept dependent,
+        // left for debugging purpose only.
+        return false;
     }
     else
     {
@@ -61,7 +58,7 @@ int ASSERT( int i )         // Return int is kept for debug purpose,
         if ( i + 1 <= MAX_N_OF_CHECKPOINTS ) V[ 1 ][ i + 1 ] ^= G;
     }
     
-    return G;
+    return true;
 }
 
 // The ASSERT(n) n parameter must match the sequence of calls. Otherwise, it is
