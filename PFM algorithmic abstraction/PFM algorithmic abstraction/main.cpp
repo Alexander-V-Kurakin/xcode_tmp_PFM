@@ -11,23 +11,31 @@ using namespace std;
 
 #define TRACE(x) (cout << #x << " = " << x << "\t")
 
-int G = 0;                  // GSR(G) as global signature register
+// PFM can also be used for parallel processes in preemptive multitasking
+// environment. In that case, the elements of the program flow monitoring
+// process have to be declared within a scope of that running process being
+// monitored, to be declared as static, or, for C++, to be used within declared
+// namespace. Then, ASSERT() reentrancy will be achieved, and the monitoring
+// will be done correctly.
+
+static int G = 0;           // GSR(G) as process scope global signature
+                            // register.
 
 #define MAX_N_OF_CHECKPOINTS ( 0 + 3 )
 
-// The list of vertices unique signatures
-#define V_0 0               // Initial condition, the vertex doesn't exist
+// The list of vertices unique signatures.
+#define V_0 0               // Initial condition, the vertex doesn't exist.
 #define V_1 0x00000011
 #define V_2 0x00002200
 #define V_3 0x00440000
 
-// Number of vertices having a unique signature.
+// Number of vertices having a unique to running process signature.
 // Since V[1][n] changes at runtime, it should not be a constant type.
-int V[ 2 ][ MAX_N_OF_CHECKPOINTS + 1 ] =
+static int V[ 2 ][ MAX_N_OF_CHECKPOINTS + 1 ] =
 {
     { V_0, V_1, V_2, V_3 },
     {                       // The list of values of D(d) = S(s) ^ S(d)
-                            // assigned at compile time, GSR(G) ^= D(d)
+                            // assigned at compile time, GSR(G) ^= D(d).
         G ^ V_0,
         G ^ V_0 ^ V_1,
         G ^ V_0 ^ V_1 ^ V_2,
@@ -54,7 +62,7 @@ bool ASSERT( int i )
     }
     else
     {
-        // Binding with the next node using GSR(G)
+        // Binding with the next node using GSR(G).
         if ( i + 1 <= MAX_N_OF_CHECKPOINTS ) V[ 1 ][ i + 1 ] ^= G;
     }
     
@@ -98,7 +106,7 @@ int main(int argc, const char * argv[]) {
     
     // The GSR(R) register must be reset before the critical path is taken.
     
-    G = 0;                  // Next critical path evaluation, here optional
+    G = 0;                  // Next critical path evaluation, here optional.
     
     cout << endl;
     TRACE(F1()); cout << endl;
@@ -106,7 +114,7 @@ int main(int argc, const char * argv[]) {
     TRACE(F3()); cout << endl;
     TRACE_VSTAT();
     
-    G = 0;                  // GSR(G) = 0, next critical path evaluation
+    G = 0;                  // GSR(G) = 0, next critical path evaluation.
     
     cout << endl;
     TRACE(F1()); cout << endl;
@@ -118,7 +126,7 @@ int main(int argc, const char * argv[]) {
     TRACE(F3()); cout << endl;
     TRACE_VSTAT();
     
-    G = 0;                  // GSR(G) = 0, next critical path evaluation
+    G = 0;                  // GSR(G) = 0, next critical path evaluation.
     
     cout << endl;
     TRACE(F1()); cout << endl;
@@ -126,7 +134,7 @@ int main(int argc, const char * argv[]) {
     TRACE(F2()); cout << endl;
     TRACE_VSTAT();
     
-    G = 0;                  // GSR(G) = 0, next critical path evaluation
+    G = 0;                  // GSR(G) = 0, next critical path evaluation.
     
     cout << endl;
     TRACE(F3()); cout << endl;
@@ -135,7 +143,7 @@ int main(int argc, const char * argv[]) {
     TRACE(F2()); cout << endl;
     TRACE_VSTAT();
     
-    G = 0;                  // Next critical path evaluation, here optional
+    G = 0;                  // Next critical path evaluation, here optional.
     
     cout << endl;
     TRACE(F1()); cout << endl;
